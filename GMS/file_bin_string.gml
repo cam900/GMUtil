@@ -4,16 +4,12 @@
 
 var f = argument0;
 var in = file_bin_read_variable_unsigned(f);
-var buff = buffer_create(in, buffer_grow, 1);
-var pos = 0;
-while (pos < buffer_get_size(buff))
+var res = "";
+while (in)
 {
-    buffer_write(buff, buffer_u8, file_bin_read_byte(f));
-    pos++;
+    res = chr(file_bin_read_variable_unsigned(f)) + res;
+    in--;
 }
-buffer_seek(buff, buffer_seek_start, 0);
-var res = buffer_read(buff, buffer_text);
-buffer_delete(buff);
 return res;
 
 #define file_bin_write_variable_string
@@ -22,15 +18,12 @@ return res;
 
 var f = argument0;
 var str = string(argument1);
-var buff = buffer_create(string_byte_length(str), buffer_grow, 1);
-var pos = 0;
-buffer_write(buff, buffer_text, str);
-buffer_seek(buff, buffer_seek_start, 0);
-file_bin_write_variable_unsigned(f, buffer_get_size(buff));
-while (pos < buffer_get_size(buff))
+file_bin_write_variable_unsigned(f, string_length(str));
+while (str != "")
 {
-    file_bin_write_byte(f, buffer_read(buff, buffer_u8));
-    pos++;
+    var tmp = ord(string_char_at(str, string_length(str)));
+    file_bin_write_variable_unsigned(f,tmp);
+    str = string_copy(str, 1, string_length(str) - 1);
 }
-buffer_delete(buff);
+
 
