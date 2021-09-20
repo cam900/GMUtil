@@ -11,7 +11,7 @@
 // *2 : Top right
 // *3 : Bottom right
 // *4 : Bottom left
-// NOTE: When using this function, you should have the Automatically Crop setting disabled for texture pages, like draw_sprite_pos.
+// NOTE: When using this function, you should have the No cropping setting enabled(GMS) or Automatically Crop setting disabled(GMS2) for texture pages, like draw_sprite_pos.
 var sprite, subimg, x1, y1, x2, y2, x3, y3, x4, y4, c1, c2, c3, c4, alpha;
 sprite = argument0;
 subimg = argument1;
