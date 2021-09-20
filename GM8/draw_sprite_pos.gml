@@ -3,7 +3,7 @@
 // Game Maker 8 implementation of draw_sprite_pos
 // see draw_sprite_pos in GMS/2/.3 manual
 
-var sprite, subimg, x1, y1, x2, x2, x3, y3, x4, y4, alpha;
+var sprite, subimg, x1, y1, x2, y2, x3, y3, x4, y4, alpha;
 sprite = argument0;
 subimg = argument1;
 x1 = argument2;
@@ -57,6 +57,7 @@ if ((x1 == x4) && (x2 == x3) && (y1 == y2) && (y3 == y4)) // rectangle?
 }
 else
 {
+    // draw texture with "shearing" like GMS draw_sprite_pos function
     var texid;
     texid = sprite_get_texture(sprite, subimg); // sprite to draw
     draw_primitive_begin_texture(pr_trianglestrip, texid);
