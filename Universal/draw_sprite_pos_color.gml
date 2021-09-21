@@ -33,12 +33,77 @@ if ((c1 == c_white) && (c2 == c_white) && (c3 == c_white) && (c4 == c_white))
 {
     draw_sprite_pos(sprite, subimg, x1, y1, x2, y2, x3, y3, x4, y4, alpha);
 }
-var texid;
-texid = sprite_get_texture(sprite, subimg); // sprite to draw
-draw_primitive_begin_texture(pr_trianglestrip, texid); // for GM8 compatiblity
-draw_vertex_texture_color(x2,y2,1,0,c2,alpha); // top right
-draw_vertex_texture_color(x3,y3,1,1,c3,alpha); // bottom right
-draw_vertex_texture_color(x1,y1,0,0,c1,alpha); // top left
-draw_vertex_texture_color(x4,y4,0,1,c4,alpha); // bottom left
-draw_primitive_end();
+else if ((x1 == x4) && (x2 == x3) && (y1 == y2) && (y3 == y4)) // rectangle?
+{
+    if ((c1 == c2) && (c2 == c3) && (c3 == c4) && (c4 == c1)) // all color value is same?
+    {
+        var a,c;
+        a = draw_get_alpha(); // store current alpha
+        c = draw_get_color(); // store current color
+        draw_set_alpha(alpha); // alpha for drawn sprite
+        draw_set_color(c1); // color for drawn sprite
+        var srcx, srcy, srcw, srch, xsize, ysize;
+        srcx = sprite_get_xoffset(sprite);
+        srcy = sprite_get_yoffset(sprite);
+        srcw = sprite_get_width(sprite);
+        srch = sprite_get_height(sprite);
+        xsize = (x2 - x1); // calculated xsize
+        ysize = (y3 - y1); // calculated ysize
+        if ((xsize == 0) || (ysize == 0))
+        {
+            draw_set_alpha(a); // restore previously stored alpha
+            draw_set_color(c); // restore previously stored color
+            return false;
+        }
+        else if ((xsize == sprite_get_width(sprite)) && (ysize == sprite_get_height(sprite))) // if size is same as source
+        {
+            draw_sprite(sprite,subimg,x1+srcx,y1+srcy);
+        }
+        else if ((xsize > 0) && (ysize > 0))
+        {
+            draw_sprite_stretched(sprite,subimg,x1,y1,x2-x1,y3-y1);
+        }
+        else
+        {
+            xsize /= srcw;
+            ysize /= srch;
+            draw_sprite_ext(sprite,subimg,x1+(srcx*xsize),y1+(srcy*ysize),xsize,ysize,0,c1,alpha);
+        }
+        draw_set_alpha(a); // restore previously stored alpha
+        draw_set_color(c); // restore previously stored color
+    }
+    else
+    {
+        var srcw, srch, xsize, ysize;
+        srcw = sprite_get_width(sprite);
+        srch = sprite_get_height(sprite);
+        xsize = (x2 - x1); // calculated xsize
+        ysize = (y3 - y1); // calculated ysize
+        if ((xsize == 0) || (ysize == 0))
+        {
+            return false;
+        }
+        else if ((xsize == sprite_get_width(sprite)) && (ysize == sprite_get_height(sprite))) // if size is same as source
+        {
+            draw_sprite_general(sprite,subimg,0,0,sprite_get_width(sprite),sprite_get_height(sprite),x1,y1,1,1,0,c1,c2,c3,c4,alpha);
+        }
+        else
+        {
+            xsize /= srcw;
+            ysize /= srch;
+            draw_sprite_general(sprite,subimg,0,0,sprite_get_width(sprite),sprite_get_height(sprite),x1,y1,xsize,ysize,0,c1,c2,c3,c4,alpha);
+        }
+    }
+}
+else
+{
+    var texid;
+    texid = sprite_get_texture(sprite, subimg); // sprite to draw
+    draw_primitive_begin_texture(pr_trianglestrip, texid); // for GM8 compatiblity
+    draw_vertex_texture_color(x2,y2,1,0,c2,alpha); // top right
+    draw_vertex_texture_color(x3,y3,1,1,c3,alpha); // bottom right
+    draw_vertex_texture_color(x1,y1,0,0,c1,alpha); // top left
+    draw_vertex_texture_color(x4,y4,0,1,c4,alpha); // bottom left
+    draw_primitive_end();
+}
 
